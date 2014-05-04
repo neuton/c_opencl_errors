@@ -66,13 +66,22 @@ extern void clGetErrorString(short int error, char * string)
 	}
 }
 
-extern void clCheckError(short int error, const char * message)
+extern short int clSoftCheckError(short int error, const char * message)
 {
 	if (error != CL_SUCCESS)
 	{
 		char ers[42];
 		clGetErrorString(error, ers);
 		fprintf(stderr, "OpenCL> Error %s: code %d (%s)\n", message, error, ers);
+		return 1;
+	}
+	return 0;
+}
+
+extern void clCheckError(short int error, const char * message)
+{
+	if (clSoftCheckError(error, message))
+	{
 		puts("Execution terminated.");
 		exit(EXIT_FAILURE);
 	}
